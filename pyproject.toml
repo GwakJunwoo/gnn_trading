@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "gnn-trading"
+version = "0.1.0"
+description = "GNN-based trading system for Korean stock and bond futures"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "gnn_trading", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+torch = "*"
+torch-geometric = "*"
+pytorch-lightning = "*"
+fastapi = "*"
+uvicorn = "*"
+pandas = "*"
+numpy = "*"
+pydantic = "*"
+requests = "*"
+pyyaml = "*"
+statsmodels = "*"
+pyarrow = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+black = "*"
+isort = "*"
+flake8 = "*"
+mypy = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

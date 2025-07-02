@@ -1,0 +1,43 @@
+name: gnn-trading
+channels:
+  - pytorch
+  - pyg
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python>=3.11
+  
+  # Core ML/DL
+  - pytorch
+  - pytorch-geometric
+  - pytorch-lightning
+  
+  # Data processing
+  - pandas
+  - numpy
+  - pyarrow
+  
+  # Web framework
+  - fastapi
+  - uvicorn
+  
+  # Configuration and utilities
+  - pyyaml
+  - requests
+  - pydantic
+  
+  # Statistical analysis
+  - statsmodels
+  
+  # Development tools (optional)
+  - pytest
+  - black
+  - isort
+  - jupyter
+  
+  # pip dependencies not available in conda
+  - pip
+  - pip:
+    - flake8
+    - mypy

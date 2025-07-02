@@ -1,0 +1,16 @@
+# Include production dependencies
+-r requirements.txt
+
+# Development and testing tools
+pytest
+black
+isort
+flake8
+mypy
+
+# Jupyter for development (optional)
+jupyter
+ipykernel
+
+# Additional development tools
+pre-commit

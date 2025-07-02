@@ -1,0 +1,25 @@
+# Core ML/DL dependencies
+torch
+torch-geometric
+pytorch-lightning
+
+# Web framework for API
+fastapi
+uvicorn
+
+# Data processing
+pandas
+numpy
+pyarrow
+
+# Configuration and utilities
+pyyaml
+requests
+pydantic
+
+# Statistical analysis
+statsmodels
+
+# Optional: GPU support (uncomment if needed)
+# torch-audio
+# torchvision

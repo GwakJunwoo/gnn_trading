@@ -49,6 +49,7 @@ from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
+import numpy as np
 import yaml
 
 logger = logging.getLogger(__name__)
@@ -113,10 +114,71 @@ def fill_macro_daily(df: pd.DataFrame, method: str = "ffill") -> pd.DataFrame:
         )
         return df
     elif method == "midas":
-        # TODO: 실제 Almon‑Midas 가중 변환 구현
-        raise NotImplementedError("MIDAS 변환은 구현 필요")
+        return _apply_midas_transformation(df)
     else:
         raise ValueError(f"Unknown macro_fill_method: {method}")
+
+
+def _apply_midas_transformation(df: pd.DataFrame, lag_days: int = 30) -> pd.DataFrame:
+    """
+    MIDAS (Mixed Data Sampling) 변환 구현
+    Almon 가중치를 사용한 고빈도 변환
+    """
+    def almon_weights(m: int, theta1: float = 1.0, theta2: float = 1.0) -> np.ndarray:
+        """Almon polynomial weights for MIDAS"""
+        j = np.arange(1, m + 1)
+        weights = np.exp(theta1 * j + theta2 * j ** 2)
+        return weights / weights.sum()
+    
+    result_rows = []
+    
+    for indicator in df["indicator"].unique():
+        indicator_data = df[df["indicator"] == indicator].copy()
+        
+        # Generate daily index from min to max date
+        date_range = pd.date_range(
+            start=indicator_data.index.min(),
+            end=indicator_data.index.max(),
+            freq="D"
+        )
+        
+        # Reindex to daily frequency
+        daily_data = indicator_data.reindex(date_range)
+        
+        # Apply MIDAS weights
+        weights = almon_weights(lag_days)
+        
+        # Rolling weighted average
+        midas_values = []
+        for i in range(len(daily_data)):
+            start_idx = max(0, i - lag_days + 1)
+            end_idx = i + 1
+            
+            # Get recent values (backwards looking)
+            recent_values = daily_data["value"].iloc[start_idx:end_idx].fillna(method="ffill")
+            
+            if len(recent_values) > 0:
+                # Use available weights for the available data
+                available_weights = weights[-len(recent_values):]
+                available_weights = available_weights / available_weights.sum()
+                
+                midas_value = np.sum(recent_values * available_weights)
+            else:
+                midas_value = np.nan
+                
+            midas_values.append(midas_value)
+        
+        # Create result dataframe for this indicator
+        for date, value in zip(date_range, midas_values):
+            if not np.isnan(value):
+                result_rows.append({
+                    "date": date,
+                    "indicator": indicator, 
+                    "value": value
+                })
+    
+    result_df = pd.DataFrame(result_rows)
+    return result_df if not result_df.empty else df.reset_index()
 
 # -------------------------------------------------------------------------
 # FeatureBuilder 클래스
