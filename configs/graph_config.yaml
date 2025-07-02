@@ -1,0 +1,8 @@
+
+snapshot_freq: '1D'
+corr_window: 60
+corr_threshold: 0.3
+granger_lag: 5
+edge_method: 'corr'
+symbols: ['KS200', 'KTB3F']
+indicators: ['CPI', 'BaseRate']

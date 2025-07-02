@@ -1,0 +1,15 @@
+
+market:
+  base_url: "https://krx.example/api"
+  api_key: null
+  asset_list: ["KS200", "KTB3F"]
+  interval: "1min"
+
+macro:
+  base_url: "https://ecos.bok.or.kr/openapi/service/rest/StatisticSearchJSON"
+  api_key: "YOUR_BOK_APIKEY"
+  indicator_list: ["901Y001", "CPI"]
+
+store:
+  root: "feature_store"
+  format: "parquet"

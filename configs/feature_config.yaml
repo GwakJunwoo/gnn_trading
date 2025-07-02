@@ -1,0 +1,4 @@
+
+feature_root: "feature_store/processed"
+ohlc_freq: "1min"
+macro_fill_method: "ffill"

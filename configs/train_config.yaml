@@ -1,0 +1,7 @@
+
+epochs: 10
+batch_size: 1
+seq_len: 5
+lr: 0.001
+snapshot_dir: "graph_snapshots"
+ckpt_dir: "checkpoints"
