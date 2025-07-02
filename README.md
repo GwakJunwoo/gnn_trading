@@ -781,8 +781,7 @@ curl -X POST "http://localhost:8000/batch_predict" \
 
 **🎯 Ready to Transform Your Trading?**
 
-📧 **Email**: [enterprise@gnn-trading.com](mailto:enterprise@gnn-trading.com)  
-📞 **Phone**: +82-2-XXX-XXXX  
+📧 **Email**: [enterprise@gnn-trading.com](mailto:lunarsabbth@gmail.com)  
 💬 **Chat**: [Schedule a Demo](https://calendly.com/gnn-trading/demo)  
 
 **📅 Book a Free Consultation** • **🎥 Watch Demo Video** • **📊 Download ROI Calculator**
