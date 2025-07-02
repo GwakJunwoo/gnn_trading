@@ -1,0 +1,74 @@
+# Development configuration for GNN Trading System
+environment: development
+debug: true
+testing: false
+
+database:
+  host: localhost
+  port: 5432
+  name: gnn_trading_dev
+  user: gnn_user
+  password: gnn_password
+  pool_size: 5
+  max_overflow: 10
+  echo: true
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  password: null
+  max_connections: 20
+  decode_responses: true
+
+api:
+  host: 127.0.0.1
+  port: 8000
+  workers: 1
+  reload: true
+  debug: true
+  cors_origins:
+    - "*"
+  max_request_size: 16777216  # 16MB
+  rate_limit: 10000
+
+model:
+  model_dir: models
+  ensemble_enabled: true
+  max_ensemble_models: 3
+  auto_reload: true
+  device: cpu
+  batch_size: 16
+  max_sequence_length: 500
+
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  health_check_interval: 30
+  alert_email_enabled: false
+  alert_slack_enabled: false
+  prometheus_enabled: false
+  grafana_enabled: false
+
+security:
+  secret_key: dev-secret-key-change-in-production
+  jwt_algorithm: HS256
+  jwt_expire_minutes: 1440
+  api_key_required: false
+  rate_limiting_enabled: false
+  cors_enabled: true
+  https_only: false
+
+logging:
+  level: DEBUG
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_enabled: true
+  file_path: logs/gnn_trading_dev.log
+  max_file_size: 52428800  # 50MB
+  backup_count: 3
+  console_enabled: true
+
+data_dir: data
+temp_dir: tmp
+max_workers: 2
+timezone: UTC

@@ -1,0 +1,75 @@
+# Production configuration for GNN Trading System
+environment: production
+debug: false
+testing: false
+
+database:
+  host: postgres
+  port: 5432
+  name: gnn_trading
+  user: gnn_user
+  password: ${POSTGRES_PASSWORD}
+  pool_size: 20
+  max_overflow: 40
+  echo: false
+
+redis:
+  host: redis
+  port: 6379
+  db: 0
+  password: ${REDIS_PASSWORD}
+  max_connections: 100
+  decode_responses: true
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  workers: 4
+  reload: false
+  debug: false
+  cors_origins:
+    - "https://yourdomain.com"
+    - "https://app.yourdomain.com"
+  max_request_size: 16777216  # 16MB
+  rate_limit: 1000
+
+model:
+  model_dir: /app/models
+  ensemble_enabled: true
+  max_ensemble_models: 5
+  auto_reload: false
+  device: auto
+  batch_size: 64
+  max_sequence_length: 1000
+
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  health_check_interval: 60
+  alert_email_enabled: true
+  alert_slack_enabled: true
+  prometheus_enabled: true
+  grafana_enabled: true
+
+security:
+  secret_key: ${SECRET_KEY}
+  jwt_algorithm: HS256
+  jwt_expire_minutes: 1440
+  api_key_required: true
+  rate_limiting_enabled: true
+  cors_enabled: true
+  https_only: true
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_enabled: true
+  file_path: /app/logs/gnn_trading.log
+  max_file_size: 104857600  # 100MB
+  backup_count: 5
+  console_enabled: true
+
+data_dir: /app/data
+temp_dir: /app/tmp
+max_workers: 8
+timezone: UTC

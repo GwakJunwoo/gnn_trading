@@ -1,0 +1,74 @@
+# Testing configuration for GNN Trading System
+environment: testing
+debug: false
+testing: true
+
+database:
+  host: localhost
+  port: 5432
+  name: gnn_trading_test
+  user: test_user
+  password: test_password
+  pool_size: 2
+  max_overflow: 5
+  echo: false
+
+redis:
+  host: localhost
+  port: 6379
+  db: 1  # Use different DB for testing
+  password: null
+  max_connections: 10
+  decode_responses: true
+
+api:
+  host: 127.0.0.1
+  port: 8001  # Different port for testing
+  workers: 1
+  reload: false
+  debug: false
+  cors_origins:
+    - "*"
+  max_request_size: 8388608  # 8MB
+  rate_limit: 100000
+
+model:
+  model_dir: tests/fixtures/models
+  ensemble_enabled: true
+  max_ensemble_models: 2
+  auto_reload: false
+  device: cpu
+  batch_size: 4
+  max_sequence_length: 100
+
+monitoring:
+  enabled: false
+  metrics_port: 9091
+  health_check_interval: 10
+  alert_email_enabled: false
+  alert_slack_enabled: false
+  prometheus_enabled: false
+  grafana_enabled: false
+
+security:
+  secret_key: test-secret-key-not-for-production
+  jwt_algorithm: HS256
+  jwt_expire_minutes: 60
+  api_key_required: false
+  rate_limiting_enabled: false
+  cors_enabled: true
+  https_only: false
+
+logging:
+  level: WARNING
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_enabled: false
+  file_path: tests/logs/test.log
+  max_file_size: 10485760  # 10MB
+  backup_count: 1
+  console_enabled: false
+
+data_dir: tests/fixtures/data
+temp_dir: tests/tmp
+max_workers: 1
+timezone: UTC

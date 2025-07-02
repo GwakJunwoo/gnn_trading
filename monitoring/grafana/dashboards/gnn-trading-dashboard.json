@@ -1,0 +1,128 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "GNN Trading System Dashboard",
+    "tags": ["gnn", "trading", "ml"],
+    "style": "dark",
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "System Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"gnn-trading-api\"}",
+            "legendFormat": "API Status"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "horizontal"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Prediction Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(gnn_predictions_total[5m])",
+            "legendFormat": "Predictions/sec"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      },
+      {
+        "id": 3,
+        "title": "Prediction Latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(gnn_prediction_latency_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(gnn_prediction_latency_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      },
+      {
+        "id": 4,
+        "title": "Model Accuracy",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "gnn_model_accuracy",
+            "legendFormat": "{{model_name}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+        "yAxes": [
+          {
+            "min": 0,
+            "max": 1
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "gnn_cpu_usage_percent",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 0, "y": 20}
+      },
+      {
+        "id": 6,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "gnn_memory_usage_bytes / 1024 / 1024 / 1024",
+            "legendFormat": "Memory GB"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 12, "y": 20}
+      },
+      {
+        "id": 7,
+        "title": "Data Quality Score",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "gnn_data_quality_score",
+            "legendFormat": "{{data_source}}"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 0, "y": 26}
+      },
+      {
+        "id": 8,
+        "title": "Active Connections",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "gnn_active_connections",
+            "legendFormat": "Connections"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 12, "y": 26}
+      }
+    ]
+  }
+}

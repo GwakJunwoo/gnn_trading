@@ -1,25 +1,94 @@
 # Core ML/DL dependencies
-torch
-torch-geometric
-pytorch-lightning
+torch>=2.0.0
+torch-geometric>=2.3.0
+pytorch-lightning>=2.0.0
+scikit-learn>=1.3.0
 
 # Web framework for API
-fastapi
-uvicorn
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+websockets>=11.0
 
-# Data processing
-pandas
-numpy
-pyarrow
+# Data processing and storage
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=12.0.0
+h5py>=3.8.0
 
 # Configuration and utilities
-pyyaml
-requests
-pydantic
+pyyaml>=6.0
+requests>=2.31.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
 
-# Statistical analysis
-statsmodels
+# Statistical analysis and metrics
+statsmodels>=0.14.0
+scipy>=1.10.0
+
+# Database connections (optional)
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0  # PostgreSQL
+pymongo>=4.4.0  # MongoDB
+
+# Monitoring and logging
+prometheus-client>=0.17.0
+structlog>=23.1.0
+psutil>=5.9.0
+
+# Testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Development tools
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Jupyter notebook support (optional)
+jupyter>=1.0.0
+
+# Redis for caching and queuing
+redis>=4.5.0
+celery>=5.3.0
+
+# Additional production dependencies
+gunicorn>=21.0.0
+supervisor>=4.2.0
+
+# Docker and deployment
+docker>=6.1.0
+
+# Email support for alerts
+smtplib2>=0.2.1
+
+# Security
+cryptography>=41.0.0
+python-jose[cryptography]>=3.3.0
+
+# Performance monitoring
+memory-profiler>=0.61.0
+ipywidgets>=8.0.0
+plotly>=5.15.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Performance optimization
+numba>=0.57.0
+cython>=3.0.0
+
+# Memory profiling and optimization
+memory-profiler>=0.60.0
+psutil>=5.9.0
+
+# Korean market data (optional)
+# beautifulsoup4>=4.12.0  # For web scraping
+# selenium>=4.10.0  # For dynamic content
 
 # Optional: GPU support (uncomment if needed)
 # torch-audio
 # torchvision
+# cupy-cuda11x  # For CUDA 11.x
+# cudf-cu11     # GPU-accelerated pandas

@@ -1,0 +1,183 @@
+"""
+Docker Compose configuration for GNN Trading System
+Complete production deployment with all services
+"""
+
+version: '3.8'
+
+services:
+  # Main GNN Trading API
+  gnn-trading-api:
+    build: .
+    image: gnn-trading:latest
+    container_name: gnn-trading-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+      - LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379
+      - POSTGRES_URL=postgresql://gnn_user:gnn_password@postgres:5432/gnn_trading
+      - MONITORING_ENABLED=true
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./configs:/app/configs
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Background task worker
+  gnn-trading-worker:
+    build: .
+    image: gnn-trading:latest
+    container_name: gnn-trading-worker
+    environment:
+      - ENV=production
+      - LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379
+      - POSTGRES_URL=postgresql://gnn_user:gnn_password@postgres:5432/gnn_trading
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./configs:/app/configs
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    command: ["python", "-m", "gnn_trading.cli", "worker", "--config", "configs/worker_config.yaml"]
+
+  # Data streaming processor
+  gnn-trading-stream:
+    build: .
+    image: gnn-trading:latest
+    container_name: gnn-trading-stream
+    environment:
+      - ENV=production
+      - LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379
+      - POSTGRES_URL=postgresql://gnn_user:gnn_password@postgres:5432/gnn_trading
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./configs:/app/configs
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    command: ["python", "-m", "gnn_trading.cli", "stream", "--config", "configs/stream_config.yaml"]
+
+  # Redis for caching and message queuing
+  redis:
+    image: redis:7-alpine
+    container_name: gnn-trading-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    container_name: gnn-trading-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=gnn_trading
+      - POSTGRES_USER=gnn_user
+      - POSTGRES_PASSWORD=gnn_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    restart: unless-stopped
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: gnn-trading-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  # Grafana for monitoring dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: gnn-trading-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: gnn-trading-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - gnn-trading-api
+      - grafana
+    restart: unless-stopped
+
+  # Optional: MinIO for object storage
+  minio:
+    image: minio/minio:latest
+    container_name: gnn-trading-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+  minio_data:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
